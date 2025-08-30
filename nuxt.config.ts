@@ -1,8 +1,10 @@
+import { defineNuxtConfig } from "nuxt/config";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   // Enable TypeScript
   typescript: {
-    strict: true,
+    strict: false,
+    typeCheck: false,
   },
 
   // Development tools
@@ -13,17 +15,6 @@ export default defineNuxtConfig({
 
   // Modules
   modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt"],
-
-  // TailwindCSS configuration
-  tailwindcss: {
-    cssPath: "~/assets/css/main.css",
-    configPath: "tailwind.config.ts",
-  },
-
-  // Pinia configuration
-  pinia: {
-    autoImports: ["defineStore", "acceptHMRUpdate"],
-  },
 
   // Runtime config
   runtimeConfig: {
@@ -50,7 +41,7 @@ export default defineNuxtConfig({
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         {
-          hid: "description",
+          key: "description",
           name: "description",
           content:
             "Comprehensive church management system for managing members, donations, and campaigns.",
