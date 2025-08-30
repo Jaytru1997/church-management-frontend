@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { reactive, computed, toRefs } from "vue";
 
 interface User {
   _id: string;
@@ -18,7 +19,7 @@ interface AuthState {
 }
 
 export const useAuthStore = defineStore("auth", () => {
-  const config = useRuntimeConfig();
+  const apiBaseUrl = process.env.API_BASE_URL || "http://localhost:5000/api";
 
   const state = reactive<AuthState>({
     user: null,
@@ -41,10 +42,10 @@ export const useAuthStore = defineStore("auth", () => {
     state.error = null;
 
     try {
-      const response = await $fetch(`${config.public.apiBaseUrl}/auth/login`, {
+      const response = (await $fetch(`${apiBaseUrl}/auth/login`, {
         method: "POST",
         body: credentials,
-      });
+      })) as { token: string; user: User };
 
       const { token, user } = response;
 
@@ -77,13 +78,10 @@ export const useAuthStore = defineStore("auth", () => {
     state.error = null;
 
     try {
-      const response = await $fetch(
-        `${config.public.apiBaseUrl}/auth/register`,
-        {
-          method: "POST",
-          body: userData,
-        }
-      );
+      const response = (await $fetch(`${apiBaseUrl}/auth/register`, {
+        method: "POST",
+        body: userData,
+      })) as { token: string; user: User };
 
       const { token, user } = response;
 
@@ -107,7 +105,7 @@ export const useAuthStore = defineStore("auth", () => {
   const logout = async () => {
     try {
       if (state.token) {
-        await $fetch(`${config.public.apiBaseUrl}/auth/logout`, {
+        await $fetch(`${apiBaseUrl}/auth/logout`, {
           method: "POST",
         });
       }
@@ -122,7 +120,9 @@ export const useAuthStore = defineStore("auth", () => {
     if (!state.token) return;
 
     try {
-      const response = await $fetch(`${config.public.apiBaseUrl}/auth/me`);
+      const response = (await $fetch(`${apiBaseUrl}/auth/me`)) as {
+        user: User;
+      };
       state.user = response.user;
       state.isAuthenticated = true;
     } catch (error) {
@@ -133,13 +133,10 @@ export const useAuthStore = defineStore("auth", () => {
 
   const updateProfile = async (profileData: Partial<User>) => {
     try {
-      const response = await $fetch(
-        `${config.public.apiBaseUrl}/auth/profile`,
-        {
-          method: "PUT",
-          body: profileData,
-        }
-      );
+      const response = (await $fetch(`${apiBaseUrl}/auth/profile`, {
+        method: "PUT",
+        body: profileData,
+      })) as { user: User };
 
       if (state.user) {
         state.user = { ...state.user, ...response.user };
@@ -157,13 +154,10 @@ export const useAuthStore = defineStore("auth", () => {
     newPassword: string;
   }) => {
     try {
-      const response = await $fetch(
-        `${config.public.apiBaseUrl}/auth/change-password`,
-        {
-          method: "PUT",
-          body: passwordData,
-        }
-      );
+      const response = await $fetch(`${apiBaseUrl}/auth/change-password`, {
+        method: "PUT",
+        body: passwordData,
+      });
 
       return response;
     } catch (error: any) {

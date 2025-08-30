@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { reactive, computed, toRefs } from "vue";
 
 interface Church {
   _id: string;
@@ -41,6 +42,8 @@ interface ChurchState {
 }
 
 export const useChurchStore = defineStore("church", () => {
+  const apiBaseUrl = process.env.API_BASE_URL || "http://localhost:5000/api";
+
   const state = reactive<ChurchState>({
     churches: [],
     currentChurch: null,
@@ -61,8 +64,9 @@ export const useChurchStore = defineStore("church", () => {
   const fetchChurches = async () => {
     state.loading = true;
     try {
-      const { $fetch } = useNuxtApp();
-      const response = await $fetch("/churches");
+      const response = (await $fetch(`${apiBaseUrl}/churches`)) as {
+        churches: Church[];
+      };
       state.churches = response.churches;
       return state.churches;
     } catch (error: any) {
@@ -76,8 +80,9 @@ export const useChurchStore = defineStore("church", () => {
   const fetchChurch = async (churchId: string) => {
     state.loading = true;
     try {
-      const { $fetch } = useNuxtApp();
-      const response = await $fetch(`/churches/${churchId}`);
+      const response = (await $fetch(`${apiBaseUrl}/churches/${churchId}`)) as {
+        church: Church;
+      };
       state.currentChurch = response.church;
       return state.currentChurch;
     } catch (error: any) {
@@ -91,11 +96,10 @@ export const useChurchStore = defineStore("church", () => {
   const createChurch = async (churchData: Partial<Church>) => {
     state.loading = true;
     try {
-      const { $fetch } = useNuxtApp();
-      const response = await $fetch("/churches", {
+      const response = (await $fetch(`${apiBaseUrl}/churches`, {
         method: "POST",
         body: churchData,
-      });
+      })) as { church: Church };
 
       const newChurch = response.church;
       state.churches.push(newChurch);
@@ -114,11 +118,10 @@ export const useChurchStore = defineStore("church", () => {
   ) => {
     state.loading = true;
     try {
-      const { $fetch } = useNuxtApp();
-      const response = await $fetch(`/churches/${churchId}`, {
+      const response = (await $fetch(`${apiBaseUrl}/churches/${churchId}`, {
         method: "PUT",
         body: updateData,
-      });
+      })) as { church: Church };
 
       const updatedChurch = response.church;
 
@@ -145,8 +148,7 @@ export const useChurchStore = defineStore("church", () => {
   const deleteChurch = async (churchId: string) => {
     state.loading = true;
     try {
-      const { $fetch } = useNuxtApp();
-      await $fetch(`/churches/${churchId}`, { method: "DELETE" });
+      await $fetch(`${apiBaseUrl}/churches/${churchId}`, { method: "DELETE" });
 
       // Remove from churches array
       state.churches = state.churches.filter((c) => c._id !== churchId);
@@ -170,11 +172,13 @@ export const useChurchStore = defineStore("church", () => {
       const formData = new FormData();
       formData.append("logo", file);
 
-      const { $fetch } = useNuxtApp();
-      const response = await $fetch(`/churches/${churchId}/logo`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = (await $fetch(
+        `${apiBaseUrl}/churches/${churchId}/logo`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      )) as { church: Church };
 
       const updatedChurch = response.church;
       updateChurchInStore(updatedChurch);
@@ -191,11 +195,13 @@ export const useChurchStore = defineStore("church", () => {
       const formData = new FormData();
       formData.append("banner", file);
 
-      const { $fetch } = useNuxtApp();
-      const response = await $fetch(`/churches/${churchId}/banner`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = (await $fetch(
+        `${apiBaseUrl}/churches/${churchId}/banner`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      )) as { church: Church };
 
       const updatedChurch = response.church;
       updateChurchInStore(updatedChurch);
@@ -209,10 +215,9 @@ export const useChurchStore = defineStore("church", () => {
 
   const fetchDonationCategories = async (churchId: string) => {
     try {
-      const { $fetch } = useNuxtApp();
-      const response = await $fetch(
-        `/churches/${churchId}/donation-categories`
-      );
+      const response = (await $fetch(
+        `${apiBaseUrl}/churches/${churchId}/donation-categories`
+      )) as { categories: DonationCategory[] };
       state.donationCategories = response.categories;
       return state.donationCategories;
     } catch (error: any) {
@@ -227,14 +232,13 @@ export const useChurchStore = defineStore("church", () => {
     categoryData: Partial<DonationCategory>
   ) => {
     try {
-      const { $fetch } = useNuxtApp();
-      const response = await $fetch(
-        `/churches/${churchId}/donation-categories`,
+      const response = (await $fetch(
+        `${apiBaseUrl}/churches/${churchId}/donation-categories`,
         {
           method: "POST",
           body: categoryData,
         }
-      );
+      )) as { category: DonationCategory };
 
       const newCategory = response.category;
       state.donationCategories.push(newCategory);
@@ -247,8 +251,9 @@ export const useChurchStore = defineStore("church", () => {
 
   const fetchServices = async (churchId: string) => {
     try {
-      const { $fetch } = useNuxtApp();
-      const response = await $fetch(`/churches/${churchId}/services`);
+      const response = (await $fetch(
+        `${apiBaseUrl}/churches/${churchId}/services`
+      )) as { services: Service[] };
       state.services = response.services;
       return state.services;
     } catch (error: any) {
@@ -262,11 +267,13 @@ export const useChurchStore = defineStore("church", () => {
     serviceData: Partial<Service>
   ) => {
     try {
-      const { $fetch } = useNuxtApp();
-      const response = await $fetch(`/churches/${churchId}/services`, {
-        method: "POST",
-        body: serviceData,
-      });
+      const response = (await $fetch(
+        `${apiBaseUrl}/churches/${churchId}/services`,
+        {
+          method: "POST",
+          body: serviceData,
+        }
+      )) as { service: Service };
 
       const newService = response.service;
       state.services.push(newService);

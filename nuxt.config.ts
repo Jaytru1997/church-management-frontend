@@ -26,10 +26,6 @@ export default defineNuxtConfig({
       apiBaseUrl: process.env.API_BASE_URL || "http://localhost:5000/api",
       pusherKey: process.env.PUSHER_KEY || "your-pusher-key",
       pusherCluster: process.env.PUSHER_CLUSTER || "mt1",
-      monnifyPublicKey:
-        process.env.MONNIFY_PUBLIC_KEY || "your-monnify-public-key",
-      monnifyContractCode:
-        process.env.MONNIFY_CONTRACT_CODE || "your-contract-code",
     },
   },
 
@@ -53,6 +49,6 @@ export default defineNuxtConfig({
 
   // Nitro configuration
   nitro: {
-    preset: "node",
+    preset: "static",
   },
 });

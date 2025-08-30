@@ -1,13 +1,13 @@
 # Church Management Frontend
 
-A comprehensive church management system built with Nuxt.js, Pinia, and TailwindCSS. This frontend application provides tools for managing church operations including member management, donation tracking, campaign management, and real-time notifications.
+A comprehensive church management system built with **Nuxt 4**, Pinia, and TailwindCSS. This frontend application provides tools for managing church operations including member management, donation tracking, campaign management, and real-time notifications.
 
 ## 🚀 Features
 
 ### Core Functionality
 
 - **User Authentication & Authorization**
-  - JWT-based authentication
+  - JWT-based authentication (handled by backend)
   - Role-based access control (Admin, Volunteer, Member)
   - Profile management and password updates
 
@@ -25,7 +25,7 @@ A comprehensive church management system built with Nuxt.js, Pinia, and Tailwind
 
 - **Donation Management**
   - Manual donation recording
-  - Online payments via Monnify integration
+  - Online payments via Monnify integration (backend handles payment processing)
   - Donation categorization
   - Receipt generation
 
@@ -43,19 +43,20 @@ A comprehensive church management system built with Nuxt.js, Pinia, and Tailwind
 
 ## 🛠️ Tech Stack
 
-- **Frontend Framework**: Nuxt.js 2.x
-- **State Management**: Pinia
-- **Styling**: TailwindCSS
-- **HTTP Client**: Axios
+- **Frontend Framework**: Nuxt 4.x
+- **State Management**: Pinia 3.x
+- **Styling**: TailwindCSS 3.x
+- **HTTP Client**: Nuxt 4 built-in `$fetch`
 - **Real-time**: Pusher
-- **Payment**: Monnify
-- **Build Tool**: Webpack
+- **Payment**: Monnify (backend integration)
+- **Build Tool**: Vite
 - **Package Manager**: npm
+- **TypeScript**: Full TypeScript support
 
 ## 📋 Prerequisites
 
-- Node.js 14.x or higher
-- npm 6.x or higher
+- Node.js 18.x or higher
+- npm 8.x or higher
 - Backend API server running (see backend repository)
 
 ## 🚀 Installation
@@ -84,10 +85,6 @@ A comprehensive church management system built with Nuxt.js, Pinia, and Tailwind
    PUSHER_KEY=your_pusher_key
    PUSHER_CLUSTER=mt1
    
-   # Monnify Configuration
-   MONNIFY_PUBLIC_KEY=your_monnify_public_key
-   MONNIFY_CONTRACT_CODE=your_contract_code
-   
    # App Configuration
    NODE_ENV=development
    ```
@@ -103,182 +100,112 @@ A comprehensive church management system built with Nuxt.js, Pinia, and Tailwind
 
 ## 🏗️ Project Structure
 
-```
+```text
 church-management-frontend/
-├── assets/                 # Global styles and assets
+├── app.vue                    # Main app entry point (Nuxt 4)
+├── assets/                    # Global styles and assets
 │   └── css/
-│       └── main.css       # Main CSS file with Tailwind imports
-├── components/            # Reusable Vue components
-│   ├── DonationForm.vue  # Donation form component
-│   └── ...               # Other components
-├── layouts/              # Layout components
-│   ├── default.vue       # Main application layout
-│   └── auth.vue          # Authentication layout
-├── pages/                # Page components
-│   ├── index.vue         # Landing page
-│   ├── auth/             # Authentication pages
-│   ├── dashboard.vue     # Main dashboard
-│   └── ...               # Other pages
-├── plugins/              # Nuxt.js plugins
-│   ├── pinia.js          # Pinia integration
-│   ├── axios.js          # Axios configuration
-│   ├── pusher.js         # Pusher integration
-│   ├── toast.js          # Toast notifications
-│   └── monnify.js        # Monnify payment integration
-├── stores/               # Pinia stores
-│   ├── auth.js           # Authentication state
-│   ├── church.js         # Church management state
-│   ├── member.js         # Member management state
-│   ├── donation.js       # Donation state
-│   └── notification.js   # Notification state
-├── nuxt.config.js        # Nuxt.js configuration
-├── tailwind.config.js    # TailwindCSS configuration
-├── package.json          # Dependencies and scripts
-└── README.md             # This file
+│       └── main.css          # Main CSS file with glassmorphic design system
+├── components/               # Reusable Vue components
+│   ├── DonationForm.vue     # Donation form component
+│   └── ...                  # Other components
+├── layouts/                 # Layout components
+│   ├── default.vue          # Main application layout
+│   └── auth.vue             # Authentication layout
+├── pages/                   # Page components
+│   ├── index.vue            # Landing page
+│   ├── auth/                # Authentication pages
+│   ├── dashboard.vue        # Main dashboard
+│   └── ...                  # Other pages
+├── stores/                  # Pinia stores (TypeScript)
+│   ├── auth.ts              # Authentication state
+│   ├── church.ts            # Church management state
+│   ├── donation.ts          # Donation state
+│   └── ...                  # Other stores
+├── nuxt.config.ts           # Nuxt 4 configuration
+├── tailwind.config.ts       # TailwindCSS configuration
+├── tsconfig.json            # TypeScript configuration
+├── vercel.json              # Vercel deployment configuration
+└── package.json             # NPM configuration
 ```
 
-## 🔧 Configuration
+## 🎨 Design System
 
-### Nuxt.js Configuration
+### Modern Glassmorphic Design
 
-The `nuxt.config.js` file contains:
+The application features a modern glassmorphic design system with:
 
-- Module configurations (Axios, Auth, TailwindCSS)
-- Build settings
-- Environment variables
-- Server configuration
+- **Glass Cards**: `backdrop-blur-xl bg-white/10 border border-white/20`
+- **Gradient Backgrounds**: `bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900`
+- **Smooth Animations**: CSS transitions and keyframe animations
+- **Modern Color Palette**: Purple, slate, and accent colors
+- **Responsive Design**: Mobile-first approach with TailwindCSS
 
-### TailwindCSS Configuration
+### Key Design Classes
 
-The `tailwind.config.js` file includes:
+```css
+/* Glass card effect */
+.glass-card {
+  @apply backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-2xl;
+}
 
-- Custom color schemes
-- Component classes
-- Purge settings for production builds
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent;
+}
 
-### Store Configuration
-
-Each Pinia store manages specific domain:
-
-- **Auth Store**: User authentication and profile
-- **Church Store**: Church data and settings
-- **Member Store**: Member management and teams
-- **Donation Store**: Donations and campaigns
-- **Notification Store**: Real-time notifications
-
-## 🚀 Development
-
-### Available Scripts
-
-```bash
-# Development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm run start
-
-# Generate static site
-npm run generate
-
-# Lint code
-npm run lint
-
-# Fix linting issues
-npm run lint:fix
+/* Modern buttons */
+.btn-primary {
+  @apply bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300;
+}
 ```
-
-### Code Style
-
-- **Indentation**: 2 spaces
-- **Quotes**: Single quotes
-- **Semicolons**: Required
-- **Line length**: 80 characters max
-- **Vue component structure**: Template, Script, Style order
-
-### Component Guidelines
-
-- Use composition API with Pinia stores
-- Implement proper error handling
-- Add loading states for async operations
-- Use TailwindCSS utility classes
-- Follow Vue.js best practices
-
-## 🔌 API Integration
-
-### Backend Endpoints
-
-The frontend integrates with these backend endpoints:
-
-- **Authentication**: `/api/auth/*`
-- **Churches**: `/api/churches/*`
-- **Members**: `/api/members/*`
-- **Donations**: `/api/donations/*`
-- **Campaigns**: `/api/campaigns/*`
-- **Notifications**: `/api/notifications/*`
-
-### Authentication Flow
-
-1. User submits login credentials
-2. Backend validates and returns JWT token
-3. Frontend stores token in localStorage
-4. Token included in subsequent API requests
-5. Automatic token refresh and logout on expiration
-
-## 🎨 UI Components
-
-### Design System
-
-- **Colors**: Blue primary, gray neutrals, semantic colors
-- **Typography**: Inter font family
-- **Spacing**: Consistent 4px grid system
-- **Components**: Cards, buttons, forms, modals
-
-### Responsive Design
-
-- Mobile-first approach
-- Responsive grid layouts
-- Touch-friendly interactions
-- Adaptive navigation
 
 ## 🔒 Security Features
 
-- JWT token authentication
+- JWT token authentication (backend handled)
 - Role-based access control
 - Input validation and sanitization
-- CSRF protection
 - Secure HTTP headers
+- Environment variable protection
 
 ## 📱 Mobile Support
 
 - Responsive design
 - Touch-friendly interface
 - Progressive Web App features
-- Offline capability (planned)
+- Optimized for mobile performance
 
 ## 🚀 Deployment
 
-### Production Build
+### Vercel Deployment
 
-```bash
-npm run build
-npm run start
-```
+The project is configured for easy deployment on Vercel:
 
-### Environment Variables
+1. **Connect Repository**
+   - Link your GitHub repository to Vercel
+   - Vercel will auto-detect Nuxt 4 configuration
 
-Ensure all production environment variables are set:
+2. **Environment Variables**
+   Set the following environment variables in Vercel:
 
-- API endpoints
-- Pusher credentials
-- Monnify configuration
-- Security keys
+   ```zsh
+   API_BASE_URL=https://your-backend-api.com/api
+   PUSHER_KEY=your_pusher_key
+   PUSHER_CLUSTER=mt1
+   NODE_ENV=production
+   ```
 
-### Deployment Options
+3. **Build Configuration**
+   - Build Command: `npm run build`
+   - Output Directory: `.output/public`
+   - Install Command: `npm install`
 
-- **Vercel**: Zero-config deployment
+4. **Deploy**
+   - Vercel will automatically build and deploy your application
+   - The `vercel.json` configuration handles SPA routing
+
+### Other Deployment Options
+
 - **Netlify**: Static site hosting
 - **AWS S3**: Static hosting with CloudFront
 - **Docker**: Containerized deployment
@@ -320,64 +247,81 @@ npm run test:watch
 - Error logging and reporting
 - User analytics integration
 
+## 🔧 Development
+
+### Available Scripts
+
+```bash
+# Development
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run generate     # Generate static site
+
+# Code Quality
+npm run lint         # Run ESLint
+npm run lint:fix     # Fix ESLint errors
+npm run typecheck    # Run TypeScript type checking
+```
+
+### Architecture Overview
+
+```text
+Frontend (Nuxt 4) ←→ Backend API ←→ Database
+     ↓                    ↓
+  Pinia Stores      JWT Authentication
+     ↓                    ↓
+  Components        Monnify Integration
+     ↓                    ↓
+  Glassmorphic UI   Real-time (Pusher)
+```
+
+### Key Features
+
+- **TypeScript**: Full type safety across the application
+- **Pinia Stores**: Modern state management with TypeScript
+- **Glassmorphic Design**: Modern, beautiful UI with smooth animations
+- **Backend Integration**: Clean separation of concerns
+- **Real-time Updates**: Live notifications and updates
+- **Responsive Design**: Works on all devices
+
 ## 🤝 Contributing
 
 ### Development Workflow
 
 1. Fork the repository
-2. Create feature branch
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
 3. Make changes following coding standards
-4. Add tests for new functionality
-5. Submit pull request
+4. Test your changes
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-### Code Review Process
+### Coding Standards
 
-- Automated linting and testing
-- Manual code review
-- Performance and security checks
-- Documentation updates
+- **TypeScript**: Use TypeScript for all new code
+- **Vue 3 Composition API**: Use `<script setup>` syntax
+- **Pinia**: Use Pinia stores for state management
+- **TailwindCSS**: Use utility classes for styling
+- **ESLint**: Follow ESLint rules and Prettier formatting
 
-## 📝 License
+## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
-### Documentation
+For support and questions:
 
-- [Nuxt.js Documentation](https://nuxtjs.org/docs)
-- [Pinia Documentation](https://pinia.vuejs.org/)
-- [TailwindCSS Documentation](https://tailwindcss.com/docs)
+- Create an issue in the repository
+- Check the documentation
+- Review the backend API documentation
 
-### Issues and Questions
+## 🔄 Version History
 
-- Create GitHub issues for bugs
-- Use discussions for questions
-- Check existing issues and solutions
-
-### Community
-
-- Join our Discord server
-- Follow project updates
-- Contribute to documentation
-
-## 🔮 Roadmap
-
-### Upcoming Features
-
-- **Advanced Analytics**: Detailed reporting and insights
-- **Mobile App**: React Native companion app
-- **Multi-language Support**: Internationalization
-- **Advanced Permissions**: Granular role management
-- **Integration APIs**: Third-party service connections
-
-### Long-term Goals
-
-- **AI-powered Insights**: Predictive analytics
-- **Blockchain Integration**: Transparent donation tracking
-- **Virtual Events**: Online service management
-- **Community Features**: Member interaction tools
+- **v2.0.0**: Migrated to Nuxt 4, TypeScript, modern glassmorphic design
+- **v1.0.0**: Initial release with Nuxt 2
 
 ---
 
-**Built with ❤️ for the church community**
+Built with ❤️ for church communities worldwide.
