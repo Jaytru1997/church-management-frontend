@@ -65,12 +65,6 @@
   "env": {
     "NODE_ENV": "production"
   },
-  "functions": {
-    "app/server/api/**/*.ts": {
-      "maxDuration": 30
-    }
-  },
-  "regions": ["iad1"],
   "github": {
     "silent": true
   }
