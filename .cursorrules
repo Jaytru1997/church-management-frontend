@@ -1,0 +1,189 @@
+{
+  "project": {
+    "name": "Church Management Frontend",
+    "description": "Frontend for a church management application built with Nuxt.js, supporting real-time features, payments, and multi-church management.",
+    "version": "1.0.0",
+    "language": "JavaScript",
+    "framework": "Nuxt.js",
+    "database": "MongoDB (via Backend API)",
+    "external_services": [
+      "Monnify",
+      "Pusher",
+      "Cloudflare"
+    ]
+  },
+  "rules": {
+    "file_structure": {
+      "directories": [
+        {
+          "path": "/",
+          "name": "assets",
+          "description": "Contains global styles, images, and fonts"
+        },
+        {
+          "path": "/components",
+          "name": "components",
+          "description": "Reusable Vue components (e.g., buttons, forms, alerts)"
+        },
+        {
+          "path": "/layouts",
+          "name": "layouts",
+          "description": "Contains the layout files (e.g., default, auth)"
+        },
+        {
+          "path": "/pages",
+          "name": "pages",
+          "description": "Contains page-level components like Home, Dashboard, Church Management, etc."
+        },
+        {
+          "path": "/stores",
+          "name": "stores",
+          "description": "Pinia stores for state management (user, church, donation, etc.)"
+        },
+        {
+          "path": "/plugins",
+          "name": "plugins",
+          "description": "Contains Nuxt.js plugins for integrating third-party libraries (e.g., Pusher, Monnify)"
+        },
+        {
+          "path": "/middleware",
+          "name": "middleware",
+          "description": "Contains middleware for authentication and authorization"
+        },
+        {
+          "path": "/static",
+          "name": "static",
+          "description": "Static files like images, robots.txt, favicon.ico"
+        },
+        {
+          "path": "/nuxt.config.js",
+          "name": "nuxt.config.js",
+          "description": "Nuxt.js configuration file"
+        },
+        {
+          "path": "/package.json",
+          "name": "package.json",
+          "description": "NPM configuration file for managing dependencies"
+        }
+      ],
+      "files": [
+        {
+          "path": "/stores/auth.js",
+          "name": "auth.js",
+          "description": "Pinia store for authentication state management (login, register, logout)"
+        },
+        {
+          "path": "/stores/church.js",
+          "name": "church.js",
+          "description": "Pinia store for managing church data (create, update, get church info)"
+        },
+        {
+          "path": "/stores/member.js",
+          "name": "member.js",
+          "description": "Pinia store for managing members (attendance, first-timer status)"
+        },
+        {
+          "path": "/stores/donation.js",
+          "name": "donation.js",
+          "description": "Pinia store for donation management (manual donations, Monnify integration)"
+        },
+        {
+          "path": "/stores/notification.js",
+          "name": "notification.js",
+          "description": "Pinia store for real-time notifications management via Pusher"
+        },
+        {
+          "path": "/pages/index.vue",
+          "name": "index.vue",
+          "description": "Landing page of the application"
+        },
+        {
+          "path": "/pages/dashboard.vue",
+          "name": "dashboard.vue",
+          "description": "Main dashboard for users with church overview, stats, and notifications"
+        },
+        {
+          "path": "/pages/church/manage.vue",
+          "name": "manage.vue",
+          "description": "Page for managing church details, services, and donation categories"
+        },
+        {
+          "path": "/pages/church/members.vue",
+          "name": "members.vue",
+          "description": "Page for managing church members (add, update, delete, attendance tracking)"
+        },
+        {
+          "path": "/pages/campaigns.vue",
+          "name": "campaigns.vue",
+          "description": "Page to manage fundraising campaigns (create, view, update, share)"
+        },
+        {
+          "path": "/components/DonationForm.vue",
+          "name": "DonationForm.vue",
+          "description": "Component to handle donations (both manual and online via Monnify)"
+        },
+        {
+          "path": "/components/Notification.vue",
+          "name": "Notification.vue",
+          "description": "Component to display real-time notifications"
+        },
+        {
+          "path": "/components/TeamMemberCard.vue",
+          "name": "TeamMemberCard.vue",
+          "description": "Component to display volunteer team member details"
+        }
+      ]
+    },
+    "coding_style": {
+      "indentation": "2 spaces",
+      "line_length": 80,
+      "quote_style": "single",
+      "no_trailing_commas": true,
+      "semi_colon": true,
+      "variable_declarations": "let",
+      "function_expression": "arrow",
+      "arrow_parens": "always",
+      "object_properties": "always"
+    },
+    "dependencies": {
+      "nuxt": "^2.15.0",
+      "axios": "^0.21.1",
+      "pusher-js": "^7.0.3",
+      "pinia": "^2.0.0",
+      "vue-router": "^3.5.1",
+      "tailwindcss": "^2.1.2",
+      "monnify": "^1.0.0",
+      "vue-meta": "^2.4.0"
+    },
+    "dev_dependencies": {
+      "nuxtjs/eslint-config": "^5.0.0",
+      "eslint": "^7.32.0",
+      "eslint-plugin-vue": "^7.12.0",
+      "eslint-config-prettier": "^8.3.0",
+      "prettier": "^2.3.0"
+    },
+    "testing": {
+      "enabled": true,
+      "framework": "Jest",
+      "coverage": "75%",
+      "test_files": "/tests/**/*.test.js",
+      "test_environment": "jsdom",
+      "test_setup": "/tests/setup.js"
+    },
+    "build_tools": {
+      "tailwindcss": {
+        "purge": [
+          "./pages/**/*.vue",
+          "./components/**/*.vue"
+        ]
+      },
+      "prettier": {
+        "singleQuote": true,
+        "semi": true
+      }
+    },
+    "server_configuration": {
+      "port": 3000
+    }
+  }
+}
