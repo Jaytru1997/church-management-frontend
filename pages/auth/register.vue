@@ -4,30 +4,22 @@
   >
     <div class="w-full max-w-lg">
       <!-- Logo/Brand Section -->
-      <div class="text-center mb-8 fade-in">
-        <div class="icon-container w-20 h-20 mx-auto mb-4">
-          <svg
-            class="w-12 h-12 text-purple-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-            />
-          </svg>
-        </div>
-        <h1 class="text-3xl font-bold gradient-text mb-2">Create Account</h1>
+      <div
+        class="text-center flex flex-col gap-2 items-center justify-center mb-8 fade-in"
+      >
+        <img
+          src="~/assets/images/logo.png"
+          alt="Church Sphere logo"
+          srcset=""
+          class="w-36 h-auto"
+        />
         <p class="text-white/60">Join the church management system</p>
       </div>
 
       <!-- Registration Form -->
       <div class="glass-card p-8 slide-up">
         <form @submit.prevent="handleRegister" class="space-y-6">
-          <!-- Full Name -->
+          <!-- First Name -->
           <div>
             <label for="fullName" class="form-label flex items-center">
               <svg
@@ -43,19 +35,51 @@
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
-              Full Name
+              First Name
             </label>
             <input
               id="fullName"
-              v-model="form.fullName"
+              v-model="form.firstName"
               type="text"
               required
               class="form-input"
-              :class="{ 'border-red-400/50': errors.fullName }"
-              placeholder="Enter your full name"
+              :class="{ 'border-red-400/50': errors.firstName }"
+              placeholder="Enter your first name"
             />
-            <p v-if="errors.fullName" class="mt-2 text-sm text-red-400">
-              {{ errors.fullName }}
+            <p v-if="errors.firstName" class="mt-2 text-sm text-red-400">
+              {{ errors.firstName }}
+            </p>
+          </div>
+
+          <!-- Last Name -->
+          <div>
+            <label for="lastName" class="form-label flex items-center">
+              <svg
+                class="w-4 h-4 mr-2 text-purple-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+              Last Name
+            </label>
+            <input
+              id="lastName"
+              v-model="form.lastName"
+              type="text"
+              required
+              class="form-input"
+              :class="{ 'border-red-400/50': errors.lastName }"
+              placeholder="Enter your last name"
+            />
+            <p v-if="errors.lastName" class="mt-2 text-sm text-red-400">
+              {{ errors.lastName }}
             </p>
           </div>
 
@@ -359,7 +383,7 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0 1 18 0z"
               />
             </svg>
           </div>
@@ -378,6 +402,11 @@
 </template>
 
 <script setup lang="ts">
+import { useHead } from "nuxt/app";
+import { useRouter } from "vue-router";
+import { ref, computed } from "vue";
+import { useAuthStore } from "~/stores/auth";
+
 definePageMeta({
   layout: "auth",
 });
@@ -390,7 +419,8 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 const form = ref({
-  fullName: "",
+  firstName: "",
+  lastName: "",
   email: "",
   phone: "",
   role: "",
@@ -408,10 +438,16 @@ const authError = computed(() => authStore.error);
 const validateForm = () => {
   errors.value = {};
 
-  if (!form.value.fullName) {
-    errors.value.fullName = "Full name is required";
-  } else if (form.value.fullName.length < 2) {
-    errors.value.fullName = "Full name must be at least 2 characters";
+  if (!form.value.firstName) {
+    errors.value.firstName = "First name is required";
+  } else if (form.value.firstName.length < 2) {
+    errors.value.firstName = "First name must be at least 2 characters";
+  }
+
+  if (!form.value.lastName) {
+    errors.value.lastName = "Last name is required";
+  } else if (form.value.lastName.length < 2) {
+    errors.value.lastName = "Last name must be at least 2 characters";
   }
 
   if (!form.value.email) {
@@ -453,8 +489,12 @@ const isValidEmail = (email: string) => {
 };
 
 const isValidPhone = (phone: string) => {
-  const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-  return phoneRegex.test(phone.replace(/\s/g, ""));
+  const internationalPhoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+  const localPhoneRegex = /^0[789][01]\d{8}$/;
+  return (
+    internationalPhoneRegex.test(phone.replace(/\s/g, "")) ||
+    localPhoneRegex.test(phone.replace(/\s/g, ""))
+  );
 };
 
 const handleRegister = async () => {
@@ -462,7 +502,8 @@ const handleRegister = async () => {
 
   try {
     const result = await authStore.register({
-      fullName: form.value.fullName,
+      firstName: form.value.firstName,
+      lastName: form.value.lastName,
       email: form.value.email,
       phone: form.value.phone,
       role: form.value.role,
@@ -472,7 +513,8 @@ const handleRegister = async () => {
     if (result.success) {
       registrationSuccess.value = true;
       form.value = {
-        fullName: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phone: "",
         role: "",

@@ -301,6 +301,39 @@ export const useChurchStore = defineStore("church", () => {
     }
   };
 
+  const fetchChurchStats = async (churchId: string) => {
+    try {
+      const response = (await $fetch(
+        `${apiBaseUrl}/churches/${churchId}/stats`
+      )) as { stats: any };
+
+      return response.stats;
+    } catch (error: any) {
+      state.error = error.data?.message || "Failed to fetch church statistics";
+      throw error;
+    }
+  };
+
+  const updateChurchSettings = async (churchId: string, settingsData: any) => {
+    try {
+      const response = (await $fetch(
+        `${apiBaseUrl}/churches/${churchId}/settings`,
+        {
+          method: "PUT",
+          body: settingsData,
+        }
+      )) as { church: Church };
+
+      const updatedChurch = response.church;
+      updateChurchInStore(updatedChurch);
+
+      return updatedChurch;
+    } catch (error: any) {
+      state.error = error.data?.message || "Failed to update church settings";
+      throw error;
+    }
+  };
+
   const clearError = () => {
     state.error = null;
   };
@@ -326,6 +359,8 @@ export const useChurchStore = defineStore("church", () => {
     createDonationCategory,
     fetchServices,
     createService,
+    fetchChurchStats,
+    updateChurchSettings,
     setCurrentChurch,
     updateChurchInStore,
     clearError,

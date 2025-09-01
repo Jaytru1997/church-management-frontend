@@ -9,22 +9,11 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
-            <div class="icon-container w-10 h-10 mr-3">
-              <svg
-                class="w-6 h-6 text-purple-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                />
-              </svg>
-            </div>
-            <span class="text-xl font-bold gradient-text">ChurchMS</span>
+            <img
+              src="~/assets/images/logo.svg"
+              alt="Church Sphere Logo"
+              class="w-36 h-auto"
+            />
           </div>
           <div class="flex items-center space-x-4">
             <NuxtLink to="/auth/login" class="btn-ghost text-sm">
@@ -74,7 +63,10 @@
           <div
             class="mt-10 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6"
           >
-            <NuxtLink to="/auth/register" class="btn-primary text-lg px-8 py-4">
+            <NuxtLink
+              to="/auth/register"
+              class="flex flex-row justify-center items-center btn-primary text-lg px-8 py-4"
+            >
               <svg
                 class="w-5 h-5 mr-2"
                 fill="none"
@@ -90,7 +82,10 @@
               </svg>
               Start Free Trial
             </NuxtLink>
-            <a href="#features" class="btn-ghost text-lg px-8 py-4">
+            <a
+              href="#features"
+              class="flex flex-row justify-center items-center btn-ghost text-lg px-8 py-4"
+            >
               <svg
                 class="w-5 h-5 mr-2"
                 fill="none"
@@ -101,7 +96,7 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0 1 18 0z"
                 />
               </svg>
               Learn More
@@ -326,7 +321,10 @@
           <div
             class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6"
           >
-            <NuxtLink to="/auth/register" class="btn-primary text-lg px-8 py-4">
+            <NuxtLink
+              to="/auth/register"
+              class="flex flex-row items-center justify-center btn-primary text-lg px-8 py-4"
+            >
               <svg
                 class="w-5 h-5 mr-2"
                 fill="none"
@@ -342,7 +340,10 @@
               </svg>
               Get started
             </NuxtLink>
-            <a href="#contact" class="btn-ghost text-lg px-8 py-4">
+            <a
+              href="#contact"
+              class="flex flex-row items-center justify-center btn-ghost text-lg px-8 py-4"
+            >
               <svg
                 class="w-5 h-5 mr-2"
                 fill="none"
@@ -369,22 +370,11 @@
         <div class="xl:grid xl:grid-cols-3 xl:gap-8">
           <div class="space-y-8 xl:col-span-1">
             <div class="flex items-center">
-              <div class="icon-container w-10 h-10 mr-3">
-                <svg
-                  class="w-6 h-6 text-purple-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-              </div>
-              <span class="text-xl font-bold gradient-text">ChurchMS</span>
+              <img
+                src="~/assets/images/logo.png"
+                alt="Church Sphere Logo"
+                class="w-36 h-auto"
+              />
             </div>
             <p class="text-white/60 text-base leading-relaxed">
               Empowering churches with modern management tools to focus on what
@@ -458,7 +448,7 @@
         </div>
         <div class="mt-12 border-t border-white/20 pt-8">
           <p class="text-base text-white/60 xl:text-center">
-            &copy; 2024 Church Management System. All rights reserved.
+            &copy; 2025 Church Sphere. All rights reserved.
           </p>
         </div>
       </div>
@@ -467,8 +457,10 @@
 </template>
 
 <script setup lang="ts">
+import { useHead } from "nuxt/app";
+
 useHead({
-  title: "Church Management System - Streamline Your Church Operations",
+  title: "Church Sphere - Streamline Your Church Operations",
   meta: [
     {
       name: "description",

@@ -272,6 +272,83 @@ export const useDonationStore = defineStore("donation", () => {
     }
   };
 
+  const handlePaymentCallback = async (callbackData: any) => {
+    try {
+      const response = await $fetch(`${apiBaseUrl}/donations/callback`, {
+        method: "POST",
+        body: callbackData,
+      });
+
+      // The backend will handle updating the donation status
+      // We can optionally refresh the donations list if needed
+      return response;
+    } catch (error: any) {
+      state.error = error.data?.message || "Failed to process payment callback";
+      throw error;
+    }
+  };
+
+  const verifyDonation = async (donationId: string) => {
+    try {
+      const response = (await $fetch(
+        `${apiBaseUrl}/donations/${donationId}/verify`,
+        {
+          method: "POST",
+        }
+      )) as { donation: Donation };
+
+      // Update donation in store
+      const index = state.donations.findIndex((d) => d._id === donationId);
+      if (index !== -1) {
+        state.donations[index] = response.donation;
+      }
+
+      return response.donation;
+    } catch (error: any) {
+      state.error = error.data?.message || "Failed to verify donation";
+      throw error;
+    }
+  };
+
+  const updateDonation = async (
+    donationId: string,
+    updateData: Partial<Donation>
+  ) => {
+    try {
+      const response = (await $fetch(`${apiBaseUrl}/donations/${donationId}`, {
+        method: "PUT",
+        body: updateData,
+      })) as { donation: Donation };
+
+      // Update donation in store
+      const index = state.donations.findIndex((d) => d._id === donationId);
+      if (index !== -1) {
+        state.donations[index] = response.donation;
+      }
+
+      return response.donation;
+    } catch (error: any) {
+      state.error = error.data?.message || "Failed to update donation";
+      throw error;
+    }
+  };
+
+  const deleteDonation = async (donationId: string) => {
+    try {
+      await $fetch(`${apiBaseUrl}/donations/${donationId}`, {
+        method: "DELETE",
+      });
+
+      // Remove from donations array
+      state.donations = state.donations.filter((d) => d._id !== donationId);
+
+      return true;
+    } catch (error: any) {
+      state.error = error.data?.message || "Failed to delete donation";
+      throw error;
+    }
+  };
+
   const clearError = () => {
     state.error = null;
   };
@@ -294,6 +371,10 @@ export const useDonationStore = defineStore("donation", () => {
     updateCampaign,
     deleteCampaign,
     getDonationReceipt,
+    handlePaymentCallback,
+    verifyDonation,
+    updateDonation,
+    deleteDonation,
     clearError,
   };
 });

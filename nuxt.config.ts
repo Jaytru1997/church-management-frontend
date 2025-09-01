@@ -43,7 +43,10 @@ export default defineNuxtConfig({
             "Comprehensive church management system for managing members, donations, and campaigns.",
         },
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+      link: [
+        { rel: "icon", type: "image/png", href: "/favicon.png" },
+        { rel: "icon", type: "image/svg+xml", href: "/logo.svg" },
+      ],
     },
   },
 

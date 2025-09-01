@@ -68,7 +68,8 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const register = async (userData: {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phone?: string;
     role: string;

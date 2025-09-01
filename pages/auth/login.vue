@@ -4,23 +4,14 @@
   >
     <div class="w-full max-w-md">
       <!-- Logo/Brand Section -->
-      <div class="text-center mb-8 fade-in">
-        <div class="icon-container w-20 h-20 mx-auto mb-4">
-          <svg
-            class="w-12 h-12 text-purple-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-            />
-          </svg>
-        </div>
-        <h1 class="text-3xl font-bold gradient-text mb-2">Church Management</h1>
+      <div
+        class="text-center flex flex-col gap-2 items-center justify-center mb-8 fade-in"
+      >
+        <img
+          src="~/assets/images/logo.png"
+          alt="Church Sphere Logo"
+          class="w-36 h-auto"
+        />
         <p class="text-white/60">Sign in to your account</p>
       </div>
 
@@ -213,7 +204,7 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0 1 18 0z"
             />
           </svg>
           Demo Credentials
@@ -250,12 +241,17 @@
 </template>
 
 <script setup lang="ts">
+import { useHead } from "nuxt/app";
+import { useRouter } from "vue-router";
+import { ref, computed, onMounted } from "vue";
+import { useAuthStore } from "~/stores/auth";
+
 definePageMeta({
   layout: "auth",
 });
 
 useHead({
-  title: "Sign In - Church Management System",
+  title: "Sign In - Church Sphere",
 });
 
 const authStore = useAuthStore();
