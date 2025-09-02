@@ -6,34 +6,46 @@
     <div class="container-responsive py-8">
       <div class="glass-card p-8 mb-8 fade-in">
         <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <button @click="router.back()" class="btn-ghost">
-              <svg
-                class="w-5 h-5 mr-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Back
-            </button>
+          <div class="flex items-center space-x-6">
+            <div
+              class="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"
+            >
+              <span class="text-3xl font-bold text-white">
+                {{ member?.firstName?.charAt(0)
+                }}{{ member?.lastName?.charAt(0) }}
+              </span>
+            </div>
             <div>
-              <h1 class="text-4xl font-bold gradient-text mb-2">
+              <h1 class="text-4xl font-bold gradient-text">
                 {{ member?.firstName }} {{ member?.lastName }}
               </h1>
-              <p class="text-white/80 text-lg">Member Details & Management</p>
+              <div class="flex items-center space-x-4 mt-2">
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-500/20 text-blue-400"
+                >
+                  {{ member?.isActive ? "Active" : "Inactive" }}
+                </span>
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-500/20 text-purple-400"
+                >
+                  {{ member?.isFirstTimer ? "First Timer" : "Regular Member" }}
+                </span>
+                <span
+                  class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-500/20 text-emerald-400"
+                >
+                  {{ member?.isBaptized ? "Baptized" : "Not Baptized" }}
+                </span>
+              </div>
+              <p class="text-white/60 mt-2">
+                Member since {{ formatDate(member?.membershipDate) }}
+              </p>
             </div>
           </div>
-          <div class="flex items-center space-x-4">
-            <button @click="showEditModal = true" class="btn-ghost">
+
+          <div class="flex items-center space-x-3">
+            <button @click="editMember" class="btn-secondary">
               <svg
-                class="w-5 h-5 mr-2"
+                class="w-4 h-4 mr-2"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -45,19 +57,11 @@
                   d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                 />
               </svg>
-              Edit
+              Edit Member
             </button>
-            <button
-              @click="toggleMemberStatus"
-              :class="[
-                'btn-ghost',
-                member?.isActive
-                  ? 'text-red-400 hover:text-red-300'
-                  : 'text-emerald-400 hover:text-emerald-300',
-              ]"
-            >
+            <button @click="recordAttendance" class="btn-primary">
               <svg
-                class="w-5 h-5 mr-2"
+                class="w-4 h-4 mr-2"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -69,50 +73,150 @@
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0 1 18 0z"
                 />
               </svg>
-              {{ member?.isActive ? "Deactivate" : "Activate" }}
+              Record Attendance
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Loading State -->
-      <div v-if="loading" class="flex items-center justify-center py-12">
-        <div class="loading-spinner w-12 h-12"></div>
+      <!-- Member Statistics -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="stats-card bounce-in">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-white/60 text-sm font-medium mb-1">
+                Total Donations
+              </p>
+              <p class="text-3xl font-bold text-white">
+                ₦{{ formatCurrency(memberStats.totalDonations) }}
+              </p>
+            </div>
+            <div class="icon-container">
+              <svg
+                class="w-8 h-8 text-emerald-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-card bounce-in" style="animation-delay: 0.1s">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-white/60 text-sm font-medium mb-1">
+                Attendance Rate
+              </p>
+              <p class="text-3xl font-bold text-white">
+                {{ memberStats.attendanceRate }}%
+              </p>
+            </div>
+            <div class="icon-container">
+              <svg
+                class="w-8 h-8 text-blue-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0 1 18 0z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-card bounce-in" style="animation-delay: 0.2s">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-white/60 text-sm font-medium mb-1">
+                Volunteer Teams
+              </p>
+              <p class="text-3xl font-bold text-white">
+                {{ member?.volunteerTeams?.length || 0 }}
+              </p>
+            </div>
+            <div class="icon-container">
+              <svg
+                class="w-8 h-8 text-purple-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-card bounce-in" style="animation-delay: 0.3s">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-white/60 text-sm font-medium mb-1">
+                Membership Status
+              </p>
+              <p class="text-3xl font-bold text-white">
+                {{ memberStats.membershipYears }}y
+              </p>
+            </div>
+            <div class="icon-container">
+              <svg
+                class="w-8 h-8 text-yellow-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Member Details -->
-      <div v-else-if="member" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Main Information -->
+      <!-- Main Content -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Member Details -->
         <div class="lg:col-span-2 space-y-8">
-          <!-- Basic Information -->
+          <!-- Personal Information -->
           <div class="glass-card p-6 slide-up">
             <h2 class="text-2xl font-bold gradient-text mb-6">
-              Basic Information
+              Personal Information
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label class="form-label">First Name</label>
-                <p class="text-white/80">{{ member.firstName }}</p>
-              </div>
-              <div>
-                <label class="form-label">Last Name</label>
-                <p class="text-white/80">{{ member.lastName }}</p>
-              </div>
-              <div>
                 <label class="form-label">Email</label>
-                <p class="text-white/80">{{ member.email }}</p>
+                <p class="text-white">{{ member?.email }}</p>
               </div>
               <div>
                 <label class="form-label">Phone</label>
-                <p class="text-white/80">
-                  {{ member.phone || "Not provided" }}
-                </p>
+                <p class="text-white">{{ member?.phone || "Not provided" }}</p>
               </div>
               <div>
                 <label class="form-label">Date of Birth</label>
-                <p class="text-white/80">
+                <p class="text-white">
                   {{
-                    member.dateOfBirth
+                    member?.dateOfBirth
                       ? formatDate(member.dateOfBirth)
                       : "Not provided"
                   }}
@@ -120,17 +224,17 @@
               </div>
               <div>
                 <label class="form-label">Gender</label>
-                <p class="text-white/80">
+                <p class="text-white">
                   {{
-                    member.gender ? capitalize(member.gender) : "Not specified"
+                    member?.gender ? capitalize(member.gender) : "Not specified"
                   }}
                 </p>
               </div>
               <div>
                 <label class="form-label">Marital Status</label>
-                <p class="text-white/80">
+                <p class="text-white">
                   {{
-                    member.maritalStatus
+                    member?.maritalStatus
                       ? capitalize(member.maritalStatus)
                       : "Not specified"
                   }}
@@ -138,103 +242,83 @@
               </div>
               <div>
                 <label class="form-label">Occupation</label>
-                <p class="text-white/80">
-                  {{ member.occupation || "Not specified" }}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Church Information -->
-          <div class="glass-card p-6 slide-up">
-            <h2 class="text-2xl font-bold gradient-text mb-6">
-              Church Information
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label class="form-label">Membership Date</label>
-                <p class="text-white/80">
-                  {{ formatDate(member.membershipDate) }}
-                </p>
-              </div>
-              <div>
-                <label class="form-label">Status</label>
-                <span
-                  :class="[
-                    'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
-                    member.isActive
-                      ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'bg-red-500/20 text-red-400',
-                  ]"
-                >
-                  {{ member.isActive ? "Active" : "Inactive" }}
-                </span>
-              </div>
-              <div>
-                <label class="form-label">First Timer</label>
-                <span
-                  :class="[
-                    'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
-                    member.isFirstTimer
-                      ? 'bg-yellow-500/20 text-yellow-400'
-                      : 'bg-slate-500/20 text-slate-400',
-                  ]"
-                >
-                  {{ member.isFirstTimer ? "Yes" : "No" }}
-                </span>
-              </div>
-              <div>
-                <label class="form-label">Baptism Date</label>
-                <p class="text-white/80">
-                  {{
-                    member.baptismDate
-                      ? formatDate(member.baptismDate)
-                      : "Not baptized"
-                  }}
+                <p class="text-white">
+                  {{ member?.occupation || "Not specified" }}
                 </p>
               </div>
             </div>
           </div>
 
           <!-- Address Information -->
-          <div v-if="member.address" class="glass-card p-6 slide-up">
+          <div v-if="member?.address" class="glass-card p-6 slide-up">
             <h2 class="text-2xl font-bold gradient-text mb-6">
               Address Information
             </h2>
-            <p class="text-white/80">{{ member.address }}</p>
+            <p class="text-white">{{ member.address }}</p>
           </div>
 
-          <!-- Recent Attendance -->
+          <!-- Recent Donations -->
+          <div class="glass-card p-6 slide-up">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-2xl font-bold gradient-text">Recent Donations</h2>
+              <NuxtLink to="/donations" class="btn-ghost text-sm"
+                >View all</NuxtLink
+              >
+            </div>
+
+            <div v-if="recentDonations.length === 0" class="text-center py-8">
+              <p class="text-white/60">No donations recorded yet</p>
+            </div>
+
+            <div v-else class="space-y-4">
+              <div
+                v-for="donation in recentDonations"
+                :key="donation.id"
+                class="flex items-center justify-between p-4 rounded-lg bg-white/5"
+              >
+                <div>
+                  <p class="text-white font-medium">{{ donation.category }}</p>
+                  <p class="text-white/60 text-sm">
+                    {{ formatDate(donation.date) }}
+                  </p>
+                </div>
+                <span class="text-emerald-400 font-semibold">
+                  ₦{{ formatCurrency(donation.amount) }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Attendance History -->
           <div class="glass-card p-6 slide-up">
             <div class="flex items-center justify-between mb-6">
               <h2 class="text-2xl font-bold gradient-text">
-                Recent Attendance
+                Attendance History
               </h2>
-              <button
-                @click="showAttendanceModal = true"
-                class="btn-ghost text-sm"
-              >
-                Add Attendance
+              <button @click="recordAttendance" class="btn-primary text-sm">
+                Record Attendance
               </button>
             </div>
-            <div v-if="recentAttendance.length === 0" class="text-center py-8">
-              <p class="text-white/60">No attendance records found</p>
+
+            <div v-if="attendanceHistory.length === 0" class="text-center py-8">
+              <p class="text-white/60">No attendance records yet</p>
             </div>
+
             <div v-else class="space-y-4">
               <div
-                v-for="record in recentAttendance"
-                :key="record._id"
-                class="flex items-center justify-between p-4 rounded-xl bg-white/5"
+                v-for="record in attendanceHistory.slice(0, 10)"
+                :key="record.id"
+                class="flex items-center justify-between p-4 rounded-lg bg-white/5"
               >
                 <div>
-                  <p class="text-white font-medium">{{ record.serviceId }}</p>
+                  <p class="text-white font-medium">{{ record.service }}</p>
                   <p class="text-white/60 text-sm">
                     {{ formatDate(record.date) }}
                   </p>
                 </div>
                 <span
                   :class="[
-                    'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
+                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
                     record.status === 'present'
                       ? 'bg-emerald-500/20 text-emerald-400'
                       : record.status === 'late'
@@ -251,20 +335,91 @@
 
         <!-- Sidebar -->
         <div class="space-y-8">
+          <!-- Volunteer Teams -->
+          <div class="glass-card p-6 slide-up">
+            <h2 class="text-2xl font-bold gradient-text mb-6">
+              Volunteer Teams
+            </h2>
+
+            <div
+              v-if="!member?.volunteerTeams?.length"
+              class="text-center py-8"
+            >
+              <p class="text-white/60 text-sm">Not assigned to any teams</p>
+              <button @click="assignToTeam" class="btn-primary text-sm mt-4">
+                Assign to Team
+              </button>
+            </div>
+
+            <div v-else class="space-y-4">
+              <div
+                v-for="team in member.volunteerTeams"
+                :key="team.id"
+                class="p-4 rounded-lg bg-white/5"
+              >
+                <h3 class="font-semibold text-white">{{ team.name }}</h3>
+                <p class="text-white/60 text-sm">{{ team.role }}</p>
+              </div>
+              <button
+                @click="assignToTeam"
+                class="btn-secondary text-sm w-full"
+              >
+                Manage Teams
+              </button>
+            </div>
+          </div>
+
           <!-- Quick Actions -->
           <div class="glass-card p-6 slide-up">
-            <h3 class="text-xl font-bold gradient-text mb-4">Quick Actions</h3>
+            <h2 class="text-2xl font-bold gradient-text mb-6">Quick Actions</h2>
+
             <div class="space-y-3">
               <button
-                @click="markAsFirstTimer"
-                :disabled="member.isFirstTimer"
-                :class="[
-                  'w-full btn-ghost text-left',
-                  member.isFirstTimer ? 'opacity-50 cursor-not-allowed' : '',
-                ]"
+                @click="recordDonation"
+                class="btn-secondary w-full text-left"
               >
                 <svg
-                  class="w-4 h-4 mr-2"
+                  class="w-4 h-4 mr-2 inline"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  />
+                </svg>
+                Record Donation
+              </button>
+
+              <button
+                @click="sendMessage"
+                class="btn-secondary w-full text-left"
+              >
+                <svg
+                  class="w-4 h-4 mr-2 inline"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  />
+                </svg>
+                Send Message
+              </button>
+
+              <button
+                @click="markAsFirstTimer"
+                class="btn-secondary w-full text-left"
+              >
+                <svg
+                  class="w-4 h-4 mr-2 inline"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -278,16 +433,13 @@
                 </svg>
                 Mark as First Timer
               </button>
+
               <button
-                @click="showBaptismModal = true"
-                :disabled="!!member.baptismDate"
-                :class="[
-                  'w-full btn-ghost text-left',
-                  member.baptismDate ? 'opacity-50 cursor-not-allowed' : '',
-                ]"
+                @click="recordBaptism"
+                class="btn-secondary w-full text-left"
               >
                 <svg
-                  class="w-4 h-4 mr-2"
+                  class="w-4 h-4 mr-2 inline"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -301,160 +453,106 @@
                 </svg>
                 Record Baptism
               </button>
-              <button
-                @click="showVolunteerModal = true"
-                class="w-full btn-ghost text-left"
-              >
-                <svg
-                  class="w-4 h-4 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-                Manage Volunteer Teams
-              </button>
             </div>
           </div>
-
-          <!-- Volunteer Teams -->
-          <div class="glass-card p-6 slide-up">
-            <h3 class="text-xl font-bold gradient-text mb-4">
-              Volunteer Teams
-            </h3>
-            <div
-              v-if="member.volunteerTeams && member.volunteerTeams.length > 0"
-              class="space-y-2"
-            >
-              <div
-                v-for="teamId in member.volunteerTeams"
-                :key="teamId"
-                class="flex items-center justify-between p-3 rounded-lg bg-white/5"
-              >
-                <span class="text-white/80 text-sm">{{ teamId }}</span>
-                <button
-                  @click="removeFromTeam(teamId)"
-                  class="text-red-400 hover:text-red-300"
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <p v-else class="text-white/60 text-sm">
-              Not assigned to any teams
-            </p>
-          </div>
         </div>
-      </div>
-
-      <!-- Error State -->
-      <div v-else class="text-center py-12">
-        <div class="icon-container w-16 h-16 mx-auto mb-4">
-          <svg
-            class="w-8 h-8 text-red-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-            />
-          </svg>
-        </div>
-        <h3 class="text-xl font-semibold text-white mb-2">Member Not Found</h3>
-        <p class="text-white/60 mb-6">
-          The member you're looking for doesn't exist or has been removed.
-        </p>
-        <button @click="router.push('/members')" class="btn-primary">
-          Back to Members
-        </button>
       </div>
     </div>
-
-    <!-- Edit Member Modal -->
-    <!-- TODO: Implement edit modal -->
-
-    <!-- Attendance Modal -->
-    <!-- TODO: Implement attendance modal -->
-
-    <!-- Baptism Modal -->
-    <!-- TODO: Implement baptism modal -->
-
-    <!-- Volunteer Teams Modal -->
-    <!-- TODO: Implement volunteer teams modal -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
 import { useMemberStore } from "~/stores/member";
-import { useVolunteerTeamStore } from "~/stores/volunteer-team";
+import { useDonationStore } from "~/stores/donation";
 
-const router = useRouter();
 const route = useRoute();
 const memberStore = useMemberStore();
-const volunteerStore = useVolunteerTeamStore();
+const donationStore = useDonationStore();
 
-const memberId = route.params.id as string;
-const member = computed(() => memberStore.currentMember);
-const loading = computed(() => memberStore.loading);
+const member = ref(null);
+const loading = ref(true);
+const memberStats = ref({
+  totalDonations: 0,
+  attendanceRate: 0,
+  membershipYears: 0,
+});
 
-// Modal states
-const showEditModal = ref(false);
-const showAttendanceModal = ref(false);
-const showBaptismModal = ref(false);
-const showVolunteerModal = ref(false);
-
-// Mock data for recent attendance (replace with actual API call)
-const recentAttendance = ref([
+const recentDonations = ref([
+  { id: "1", category: "Tithes", amount: 50000, date: new Date() },
   {
-    _id: "1",
-    serviceId: "Sunday Service",
-    date: "2024-01-07",
-    status: "present" as const,
+    id: "2",
+    category: "Offerings",
+    amount: 25000,
+    date: new Date(Date.now() - 86400000),
+  },
+]);
+
+const attendanceHistory = ref([
+  { id: "1", service: "Sunday Service", date: new Date(), status: "present" },
+  {
+    id: "2",
+    service: "Midweek Service",
+    date: new Date(Date.now() - 86400000),
+    status: "present",
   },
   {
-    _id: "2",
-    serviceId: "Wednesday Prayer",
-    date: "2024-01-03",
-    status: "present" as const,
-  },
-  {
-    _id: "3",
-    serviceId: "Sunday Service",
-    date: "2023-12-31",
-    status: "late" as const,
+    id: "3",
+    service: "Sunday Service",
+    date: new Date(Date.now() - 172800000),
+    status: "late",
   },
 ]);
 
 // Methods
-const formatDate = (date: string) => {
+const editMember = () => {
+  // Navigate to edit form
+  console.log("Edit member:", member.value);
+};
+
+const recordAttendance = () => {
+  // Open attendance modal
+  console.log("Record attendance for:", member.value);
+};
+
+const recordDonation = () => {
+  // Navigate to donation form with member pre-selected
+  console.log("Record donation for:", member.value);
+};
+
+const sendMessage = () => {
+  // Open message modal
+  console.log("Send message to:", member.value);
+};
+
+const markAsFirstTimer = () => {
+  // Mark as first timer
+  console.log("Mark as first timer:", member.value);
+};
+
+const recordBaptism = () => {
+  // Record baptism
+  console.log("Record baptism for:", member.value);
+};
+
+const assignToTeam = () => {
+  // Open team assignment modal
+  console.log("Assign to team:", member.value);
+};
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    minimumFractionDigits: 0,
+  }).format(amount);
+};
+
+const formatDate = (date: string | Date) => {
   return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
+    month: "short",
     day: "numeric",
+    year: "numeric",
   }).format(new Date(date));
 };
 
@@ -462,42 +560,53 @@ const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-const toggleMemberStatus = async () => {
-  if (!member.value) return;
-
-  try {
-    await memberStore.updateMember(memberId, {
-      isActive: !member.value.isActive,
-    });
-  } catch (error) {
-    console.error("Error updating member status:", error);
-  }
-};
-
-const markAsFirstTimer = async () => {
-  if (!member.value || member.value.isFirstTimer) return;
-
-  try {
-    await memberStore.markAsFirstTimer(memberId);
-  } catch (error) {
-    console.error("Error marking as first timer:", error);
-  }
-};
-
-const removeFromTeam = async (teamId: string) => {
-  try {
-    await memberStore.addToVolunteerTeam(memberId, teamId); // This will actually remove from team
-  } catch (error) {
-    console.error("Error removing from team:", error);
-  }
-};
-
 // Initialize
 onMounted(async () => {
+  const memberId = route.params.id as string;
+
   try {
-    await memberStore.fetchMember(memberId);
+    // Fetch member data
+    member.value = await memberStore.fetchMember(memberId);
+
+    // Calculate stats
+    calculateMemberStats();
+
+    // Fetch related data
+    await fetchMemberData(memberId);
   } catch (error) {
     console.error("Error fetching member:", error);
+  } finally {
+    loading.value = false;
   }
 });
+
+const calculateMemberStats = () => {
+  if (!member.value) return;
+
+  // Calculate membership years
+  const membershipDate = new Date(member.value.membershipDate);
+  const now = new Date();
+  const membershipYears = Math.floor(
+    (now.getTime() - membershipDate.getTime()) / (1000 * 60 * 60 * 24 * 365)
+  );
+
+  memberStats.value = {
+    totalDonations: 125000, // This would come from API
+    attendanceRate: 85, // This would be calculated from attendance records
+    membershipYears,
+  };
+};
+
+const fetchMemberData = async (memberId: string) => {
+  try {
+    // Fetch donations for this member
+    // This would need to be implemented in the donation store
+    // await donationStore.fetchDonationsByMember(memberId);
+    // Fetch attendance records
+    // This would need to be implemented in the member store
+    // await memberStore.fetchAttendanceHistory(memberId);
+  } catch (error) {
+    console.error("Error fetching member data:", error);
+  }
+};
 </script>

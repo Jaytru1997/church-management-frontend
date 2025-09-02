@@ -524,7 +524,13 @@ const handleSubmit = async () => {
       category: form.value.category,
       amount: parseFloat(form.value.amount),
       date: form.value.date,
-      paymentMethod: form.value.paymentMethod || undefined,
+      paymentMethod: (form.value.paymentMethod || undefined) as
+        | "cash"
+        | "bank_transfer"
+        | "check"
+        | "online"
+        | "other"
+        | undefined,
       reference: form.value.reference || undefined,
       vendor: form.value.vendor || undefined,
       notes: form.value.notes || undefined,

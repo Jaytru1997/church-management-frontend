@@ -12,12 +12,12 @@
                 class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"
               >
                 <span class="text-2xl font-bold text-white">
-                  {{ user?.name?.charAt(0)?.toUpperCase() }}
+                  {{ user?.firstName?.charAt(0)?.toUpperCase() }}
                 </span>
               </div>
               <div>
                 <h1 class="text-3xl font-bold gradient-text">
-                  Welcome back, {{ user?.name }}!
+                  Welcome back, {{ user?.firstName }}!
                 </h1>
                 <p class="text-white/80 text-lg">
                   {{ getGreetingMessage() }}
@@ -962,7 +962,12 @@ const updateRecentActivities = (
   expenses: any[],
   members: any[]
 ) => {
-  const activities = [];
+  const activities: {
+    id: string;
+    type: string;
+    description: string;
+    timestamp: Date;
+  }[] = [];
 
   // Add recent donations
   donations.slice(0, 3).forEach((donation) => {

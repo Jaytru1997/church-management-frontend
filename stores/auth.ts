@@ -3,11 +3,36 @@ import { reactive, computed, toRefs } from "vue";
 
 interface User {
   _id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
+  phone?: string;
+  password: string;
   role: "admin" | "volunteer" | "member";
-  avatar?: string;
-  churches?: string[];
+  profilePicture?: string;
+  isActive: boolean;
+  isEmailVerified: boolean;
+  emailVerificationToken?: string;
+  emailVerificationExpires?: Date;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  lastLogin?: Date;
+  churches: Array<{
+    churchId: string;
+    role: "admin" | "volunteer" | "member";
+    joinedAt: Date;
+  }>;
+  preferences: {
+    notifications: {
+      email: boolean;
+      push: boolean;
+      sms: boolean;
+    };
+    language: string;
+    timezone: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface AuthState {

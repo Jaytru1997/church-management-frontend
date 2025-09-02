@@ -9,11 +9,16 @@
           <div>
             <h1 class="text-4xl font-bold gradient-text mb-2">Notifications</h1>
             <p class="text-white/80 text-lg">
-              Send and manage church-wide communications.
+              Stay updated with church announcements, reminders, and important
+              messages.
             </p>
           </div>
           <div class="flex items-center space-x-4">
-            <button @click="exportNotifications" class="btn-ghost">
+            <button
+              @click="markAllAsRead"
+              class="btn-ghost"
+              :disabled="unreadCount === 0"
+            >
               <svg
                 class="w-5 h-5 mr-2"
                 fill="none"
@@ -24,10 +29,10 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0 1 18 0z"
                 />
               </svg>
-              Export
+              Mark All Read
             </button>
             <NuxtLink to="/notifications/send" class="btn-primary">
               <svg
@@ -54,9 +59,37 @@
         <div class="stats-card bounce-in">
           <div class="flex items-center justify-between">
             <div>
+              <p class="text-white/60 text-sm font-medium mb-1">
+                Total Notifications
+              </p>
+              <p class="text-3xl font-bold text-white">
+                {{ stats.totalNotifications }}
+              </p>
+            </div>
+            <div class="icon-container">
+              <svg
+                class="w-8 h-8 text-blue-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 17h5l-5 5v-5zM4 19h6v-6H4v6z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-card bounce-in" style="animation-delay: 0.1s">
+          <div class="flex items-center justify-between">
+            <div>
               <p class="text-white/60 text-sm font-medium mb-1">Unread</p>
               <p class="text-3xl font-bold text-white">
-                {{ stats.unreadCount || 0 }}
+                {{ stats.unreadCount }}
               </p>
             </div>
             <div class="icon-container">
@@ -77,43 +110,17 @@
           </div>
         </div>
 
-        <div class="stats-card bounce-in" style="animation-delay: 0.1s">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-white/60 text-sm font-medium mb-1">Sent Today</p>
-              <p class="text-3xl font-bold text-white">
-                {{ stats.sentToday || 0 }}
-              </p>
-            </div>
-            <div class="icon-container">
-              <svg
-                class="w-8 h-8 text-emerald-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-
         <div class="stats-card bounce-in" style="animation-delay: 0.2s">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-white/60 text-sm font-medium mb-1">This Week</p>
               <p class="text-3xl font-bold text-white">
-                {{ stats.sentThisWeek || 0 }}
+                {{ stats.thisWeekCount }}
               </p>
             </div>
             <div class="icon-container">
               <svg
-                class="w-8 h-8 text-blue-400"
+                class="w-8 h-8 text-purple-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -132,14 +139,14 @@
         <div class="stats-card bounce-in" style="animation-delay: 0.3s">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-white/60 text-sm font-medium mb-1">Total Sent</p>
+              <p class="text-white/60 text-sm font-medium mb-1">Urgent</p>
               <p class="text-3xl font-bold text-white">
-                {{ stats.totalSent || 0 }}
+                {{ stats.urgentCount }}
               </p>
             </div>
             <div class="icon-container">
               <svg
-                class="w-8 h-8 text-purple-400"
+                class="w-8 h-8 text-yellow-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -148,7 +155,7 @@
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
                 />
               </svg>
             </div>
@@ -156,34 +163,43 @@
         </div>
       </div>
 
-      <!-- Filters and Tabs -->
+      <!-- Filters and Search -->
       <div class="glass-card p-6 mb-8 slide-up">
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center space-x-4">
-            <button
-              v-for="tab in tabs"
-              :key="tab.key"
-              @click="activeTab = tab.key"
-              :class="[
-                'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                activeTab === tab.key
-                  ? 'bg-purple-500/20 text-purple-400'
-                  : 'text-white/60 hover:text-white hover:bg-white/10',
-              ]"
-            >
-              {{ tab.label }}
-              <span
-                v-if="tab.count"
-                class="ml-2 px-2 py-1 bg-white/20 rounded-full text-xs"
+            <div class="relative">
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search notifications..."
+                class="form-input pl-10"
+              />
+              <svg
+                class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                {{ tab.count }}
-              </span>
-            </button>
-          </div>
-
-          <div class="flex items-center space-x-4">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
             <select
-              v-model="filters.type"
+              v-model="statusFilter"
+              @change="applyFilters"
+              class="form-input"
+            >
+              <option value="">All Status</option>
+              <option value="unread">Unread</option>
+              <option value="read">Read</option>
+              <option value="archived">Archived</option>
+            </select>
+            <select
+              v-model="typeFilter"
               @change="applyFilters"
               class="form-input"
             >
@@ -194,29 +210,38 @@
               <option value="error">Error</option>
               <option value="announcement">Announcement</option>
             </select>
+          </div>
 
-            <select
-              v-model="filters.priority"
-              @change="applyFilters"
-              class="form-input"
-            >
-              <option value="">All Priorities</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="urgent">Urgent</option>
-            </select>
+          <div class="flex items-center space-x-2">
+            <button @click="refreshNotifications" class="btn-ghost">
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+            </button>
           </div>
         </div>
 
-        <!-- Bulk Actions for Sent Tab -->
+        <!-- Bulk Actions -->
         <div
-          v-if="activeTab === 'sent' && selectedNotifications.length > 0"
+          v-if="selectedNotifications.length > 0"
           class="flex items-center space-x-4 p-4 bg-white/5 rounded-lg"
         >
           <span class="text-sm text-white/60"
             >{{ selectedNotifications.length }} selected</span
           >
+          <button @click="bulkMarkAsRead" class="btn-ghost text-sm">
+            Mark as Read
+          </button>
           <button @click="bulkArchive" class="btn-ghost text-sm">
             Archive
           </button>
@@ -232,15 +257,169 @@
 
       <!-- Notifications List -->
       <div class="space-y-4">
-        <!-- Loading State -->
-        <div v-if="loading" class="flex items-center justify-center py-12">
-          <div class="loading-spinner w-12 h-12"></div>
+        <div
+          v-for="notification in filteredNotifications"
+          :key="notification.id"
+          class="glass-card p-6 hover:glass-card-hover transition-all cursor-pointer"
+          @click="handleNotificationClick(notification)"
+        >
+          <div class="flex items-start space-x-4">
+            <!-- Notification Icon -->
+            <div class="flex-shrink-0">
+              <div
+                class="icon-container w-12 h-12"
+                :class="getNotificationIconClass(notification)"
+              >
+                <svg
+                  class="w-6 h-6 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    v-if="notification.type === 'info'"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                  <path
+                    v-else-if="notification.type === 'success'"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0 1 18 0z"
+                  />
+                  <path
+                    v-else-if="notification.type === 'warning'"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                  <path
+                    v-else-if="notification.type === 'error'"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0 1 18 0z"
+                  />
+                  <path
+                    v-else
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Notification Content -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center space-x-3 mb-2">
+                    <h3
+                      class="text-lg font-semibold text-white"
+                      :class="{ 'opacity-60': notification.read }"
+                    >
+                      {{ notification.title }}
+                    </h3>
+                    <span
+                      :class="[
+                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                        getPriorityColor(notification.priority),
+                      ]"
+                    >
+                      {{ capitalize(notification.priority) }}
+                    </span>
+                    <span
+                      :class="[
+                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                        getTypeColor(notification.type),
+                      ]"
+                    >
+                      {{ capitalize(notification.type) }}
+                    </span>
+                  </div>
+
+                  <p
+                    class="text-white/70 mb-3"
+                    :class="{ 'opacity-60': notification.read }"
+                  >
+                    {{ notification.message }}
+                  </p>
+
+                  <div
+                    class="flex items-center space-x-4 text-sm text-white/60"
+                  >
+                    <span>From: {{ notification.senderName }}</span>
+                    <span>{{ formatDate(notification.sentAt) }}</span>
+                    <span>{{ notification.recipientType }}</span>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center space-x-2 ml-4">
+                  <div
+                    v-if="!notification.read"
+                    class="notification-badge"
+                  ></div>
+                  <button
+                    @click.stop="toggleReadStatus(notification)"
+                    class="btn-ghost text-sm"
+                  >
+                    {{ notification.read ? "Mark Unread" : "Mark Read" }}
+                  </button>
+                  <button
+                    @click.stop="archiveNotification(notification)"
+                    class="btn-ghost text-sm"
+                  >
+                    Archive
+                  </button>
+                  <button
+                    @click.stop="deleteNotification(notification)"
+                    class="btn-ghost text-sm text-red-400 hover:text-red-300"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+
+              <!-- Action Button (if available) -->
+              <div
+                v-if="notification.actionUrl && notification.actionText"
+                class="mt-4"
+              >
+                <NuxtLink
+                  :to="notification.actionUrl"
+                  class="btn-primary text-sm inline-flex items-center"
+                >
+                  {{ notification.actionText }}
+                  <svg
+                    class="w-4 h-4 ml-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </NuxtLink>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Empty State -->
         <div
-          v-else-if="filteredNotifications.length === 0"
-          class="text-center py-12"
+          v-if="filteredNotifications.length === 0"
+          class="glass-card p-12 text-center"
         >
           <div class="icon-container w-16 h-16 mx-auto mb-4">
             <svg
@@ -258,163 +437,27 @@
             </svg>
           </div>
           <h3 class="text-xl font-semibold text-white mb-2">
-            No Notifications
+            No notifications found
           </h3>
-          <p class="text-white/60 mb-6">
+          <p class="text-white/60">
             {{
-              activeTab === "sent"
-                ? "No notifications have been sent yet."
-                : "No notifications in this category."
+              searchQuery || statusFilter || typeFilter
+                ? "Try adjusting your filters"
+                : "You're all caught up!"
             }}
           </p>
-          <NuxtLink
-            v-if="activeTab === 'sent'"
-            to="/notifications/send"
-            class="btn-primary"
-          >
-            Send Your First Notification
-          </NuxtLink>
         </div>
+      </div>
 
-        <!-- Notification Items -->
-        <div v-else class="space-y-4">
-          <div
-            v-for="notification in paginatedNotifications"
-            :key="notification._id"
-            :class="[
-              'glass-card p-6 hover:glass-card-hover transition-all cursor-pointer',
-              !notification.read && activeTab === 'received'
-                ? 'border-l-4 border-l-purple-400'
-                : '',
-            ]"
-            @click="handleNotificationClick(notification)"
-          >
-            <div class="flex items-start justify-between">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center space-x-3 mb-2">
-                  <h3 class="text-lg font-semibold text-white truncate">
-                    {{ notification.title }}
-                  </h3>
-                  <span
-                    :class="[
-                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                      getTypeColor(notification.type),
-                    ]"
-                  >
-                    {{ capitalize(notification.type) }}
-                  </span>
-                  <span
-                    :class="[
-                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                      getPriorityColor(notification.priority),
-                    ]"
-                  >
-                    {{ capitalize(notification.priority) }}
-                  </span>
-                  <span
-                    v-if="!notification.read && activeTab === 'received'"
-                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-500/20 text-purple-400"
-                  >
-                    New
-                  </span>
-                </div>
-
-                <p class="text-white/70 mb-3">
-                  {{ notification.message }}
-                </p>
-
-                <div
-                  class="flex items-center justify-between text-sm text-white/60"
-                >
-                  <span>{{ formatDate(notification.sentAt) }}</span>
-                  <div class="flex items-center space-x-4">
-                    <span>{{ getRecipientText(notification) }}</span>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        v-if="activeTab === 'received'"
-                        @click.stop="markAsRead(notification._id)"
-                        class="text-white/60 hover:text-white"
-                      >
-                        {{ notification.read ? "Mark Unread" : "Mark Read" }}
-                      </button>
-                      <button
-                        v-if="activeTab === 'sent'"
-                        @click.stop="archiveNotification(notification._id)"
-                        class="text-white/60 hover:text-white"
-                      >
-                        Archive
-                      </button>
-                      <button
-                        @click.stop="deleteNotification(notification._id)"
-                        class="text-red-400 hover:text-red-300"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Selection Checkbox for Sent Tab -->
-              <div v-if="activeTab === 'sent'" class="ml-4">
-                <input
-                  :value="notification._id"
-                  v-model="selectedNotifications"
-                  type="checkbox"
-                  class="h-4 w-4 text-purple-600 focus:ring-purple-500 bg-white/10"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pagination -->
-        <div
-          v-if="totalPages > 1"
-          class="flex items-center justify-between mt-8 pt-6 border-t border-white/10"
-        >
-          <div class="flex items-center space-x-2">
-            <span class="text-sm text-white/60">
-              Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
-              {{ Math.min(currentPage * itemsPerPage, totalItems) }} of
-              {{ totalItems }} notifications
-            </span>
-          </div>
-
-          <div class="flex items-center space-x-2">
-            <button
-              @click="currentPage = Math.max(1, currentPage - 1)"
-              :disabled="currentPage === 1"
-              class="btn-ghost text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-
-            <div class="flex items-center space-x-1">
-              <button
-                v-for="page in visiblePages"
-                :key="page"
-                @click="currentPage = page"
-                :class="[
-                  'px-3 py-1 text-sm rounded-md transition-colors',
-                  page === currentPage
-                    ? 'bg-purple-500/20 text-purple-400'
-                    : 'text-white/60 hover:text-white hover:bg-white/10',
-                ]"
-              >
-                {{ page }}
-              </button>
-            </div>
-
-            <button
-              @click="currentPage = Math.min(totalPages, currentPage + 1)"
-              :disabled="currentPage === totalPages"
-              class="btn-ghost text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
-        </div>
+      <!-- Load More -->
+      <div v-if="hasMore" class="text-center mt-8">
+        <button @click="loadMore" class="btn-secondary" :disabled="loading">
+          <span v-if="loading" class="flex items-center">
+            <div class="loading-spinner w-4 h-4 mr-2"></div>
+            Loading...
+          </span>
+          <span v-else>Load More</span>
+        </button>
       </div>
     </div>
   </div>
@@ -423,213 +466,168 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useNotificationStore } from "~/stores/notification";
-import { useChurchStore } from "~/stores/church";
+import { useAuthStore } from "~/stores/auth";
 
 const notificationStore = useNotificationStore();
-const churchStore = useChurchStore();
+const authStore = useAuthStore();
 
 const loading = computed(() => notificationStore.loading);
 const notifications = computed(() => notificationStore.notifications);
 const unreadCount = computed(() => notificationStore.unreadCount);
-const currentChurch = computed(() => churchStore.currentChurch);
 
 // State
-const activeTab = ref("received");
+const searchQuery = ref("");
+const statusFilter = ref("");
+const typeFilter = ref("");
 const selectedNotifications = ref<string[]>([]);
-const currentPage = ref(1);
-const itemsPerPage = ref(10);
-
-const filters = ref({
-  type: "",
-  priority: "",
-});
-
-// Computed properties
-const tabs = computed(() => [
-  { key: "received", label: "Received", count: unreadCount.value },
-  { key: "sent", label: "Sent" },
-]);
-
-const filteredNotifications = computed(() => {
-  let items = [...notifications.value];
-
-  // Filter by tab
-  if (activeTab.value === "received") {
-    // For received notifications, show all (they will be filtered by recipient on backend)
-  } else if (activeTab.value === "sent") {
-    // For sent notifications, show notifications sent by current user
-    // This would need to be filtered on the backend
-  }
-
-  // Apply filters
-  if (filters.value.type) {
-    items = items.filter((n) => n.type === filters.value.type);
-  }
-
-  if (filters.value.priority) {
-    items = items.filter((n) => n.priority === filters.value.priority);
-  }
-
-  return items;
-});
-
-const totalItems = computed(() => filteredNotifications.value.length);
-const totalPages = computed(() =>
-  Math.ceil(totalItems.value / itemsPerPage.value)
-);
-const paginatedNotifications = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return filteredNotifications.value.slice(start, end);
-});
-
-const visiblePages = computed(() => {
-  const pages = [];
-  const maxVisible = 5;
-  let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2));
-  let end = Math.min(totalPages.value, start + maxVisible - 1);
-
-  if (end - start + 1 < maxVisible) {
-    start = Math.max(1, end - maxVisible + 1);
-  }
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i);
-  }
-
-  return pages;
-});
+const hasMore = ref(false);
 
 const stats = ref({
+  totalNotifications: 0,
   unreadCount: 0,
-  sentToday: 0,
-  sentThisWeek: 0,
-  totalSent: 0,
+  thisWeekCount: 0,
+  urgentCount: 0,
+});
+
+// Mock data for notifications
+const mockNotifications = ref([
+  {
+    id: "1",
+    title: "Welcome to Church Management System",
+    message:
+      "Thank you for joining our church management platform. Get started by exploring the dashboard and managing your church data.",
+    type: "info",
+    priority: "low",
+    senderName: "System",
+    sentAt: new Date(),
+    read: false,
+    archived: false,
+    recipientType: "user",
+    actionUrl: "/dashboard",
+    actionText: "Explore Dashboard",
+  },
+  {
+    id: "2",
+    title: "New Member Registration",
+    message:
+      "Sarah Johnson has joined the church. Please welcome her to the congregation.",
+    type: "success",
+    priority: "medium",
+    senderName: "Membership Team",
+    sentAt: new Date(Date.now() - 3600000),
+    read: false,
+    archived: false,
+    recipientType: "church",
+  },
+  {
+    id: "3",
+    title: "Expense Approval Required",
+    message:
+      "A new expense of ₦25,000 for office supplies requires your approval.",
+    type: "warning",
+    priority: "high",
+    senderName: "Finance Team",
+    sentAt: new Date(Date.now() - 7200000),
+    read: true,
+    archived: false,
+    recipientType: "admin",
+    actionUrl: "/expenses",
+    actionText: "Review Expense",
+  },
+  {
+    id: "4",
+    title: "Sunday Service Reminder",
+    message:
+      "Don't forget Sunday service starts at 10:00 AM. We look forward to seeing you there!",
+    type: "announcement",
+    priority: "medium",
+    senderName: "Pastoral Team",
+    sentAt: new Date(Date.now() - 86400000),
+    read: true,
+    archived: false,
+    recipientType: "church",
+  },
+  {
+    id: "5",
+    title: "Building Fund Campaign Update",
+    message:
+      "Great news! Our building fund campaign has reached 75% of its target. Thank you for your generous contributions.",
+    type: "success",
+    priority: "low",
+    senderName: "Finance Team",
+    sentAt: new Date(Date.now() - 172800000),
+    read: true,
+    archived: false,
+    recipientType: "church",
+  },
+]);
+
+// Computed
+const filteredNotifications = computed(() => {
+  let filtered = mockNotifications.value;
+
+  if (searchQuery.value) {
+    filtered = filtered.filter(
+      (notification) =>
+        notification.title
+          .toLowerCase()
+          .includes(searchQuery.value.toLowerCase()) ||
+        notification.message
+          .toLowerCase()
+          .includes(searchQuery.value.toLowerCase())
+    );
+  }
+
+  if (statusFilter.value) {
+    if (statusFilter.value === "unread") {
+      filtered = filtered.filter((notification) => !notification.read);
+    } else if (statusFilter.value === "read") {
+      filtered = filtered.filter(
+        (notification) => notification.read && !notification.archived
+      );
+    } else if (statusFilter.value === "archived") {
+      filtered = filtered.filter((notification) => notification.archived);
+    }
+  }
+
+  if (typeFilter.value) {
+    filtered = filtered.filter(
+      (notification) => notification.type === typeFilter.value
+    );
+  }
+
+  // Sort by date (newest first)
+  filtered.sort(
+    (a, b) => new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
+  );
+
+  return filtered;
 });
 
 // Methods
-const applyFilters = async () => {
-  await notificationStore.fetchNotifications({
-    type: filters.value.type || undefined,
-    priority: filters.value.priority || undefined,
-  });
-  calculateStats();
+const applyFilters = () => {
+  // Filters are applied reactively through computed properties
 };
 
-const calculateStats = () => {
-  const allNotifications = notificationStore.notifications;
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-  stats.value = {
-    unreadCount: notificationStore.unreadCount,
-    sentToday: allNotifications.filter((n) => new Date(n.sentAt) >= today)
-      .length,
-    sentThisWeek: allNotifications.filter((n) => new Date(n.sentAt) >= weekAgo)
-      .length,
-    totalSent: allNotifications.length,
+const getNotificationIconClass = (notification: any) => {
+  const colors = {
+    info: "bg-blue-500/20",
+    success: "bg-emerald-500/20",
+    warning: "bg-yellow-500/20",
+    error: "bg-red-500/20",
+    announcement: "bg-purple-500/20",
   };
+  return colors[notification.type as keyof typeof colors] || colors.info;
 };
 
-const handleNotificationClick = (notification: any) => {
-  if (activeTab.value === "received" && !notification.read) {
-    markAsRead(notification._id);
-  }
-  // Could navigate to notification detail or perform action
-};
-
-const markAsRead = async (notificationId: string) => {
-  try {
-    await notificationStore.markAsRead(notificationId);
-    calculateStats();
-  } catch (error) {
-    console.error("Error marking notification as read:", error);
-  }
-};
-
-const archiveNotification = async (notificationId: string) => {
-  if (!confirm("Are you sure you want to archive this notification?")) return;
-
-  try {
-    await notificationStore.archiveNotification(notificationId);
-    calculateStats();
-  } catch (error) {
-    console.error("Error archiving notification:", error);
-  }
-};
-
-const deleteNotification = async (notificationId: string) => {
-  if (
-    !confirm(
-      "Are you sure you want to delete this notification? This action cannot be undone."
-    )
-  )
-    return;
-
-  try {
-    await notificationStore.deleteNotification(notificationId);
-    calculateStats();
-  } catch (error) {
-    console.error("Error deleting notification:", error);
-  }
-};
-
-const bulkArchive = async () => {
-  if (selectedNotifications.value.length === 0) return;
-
-  if (
-    !confirm(
-      `Are you sure you want to archive ${selectedNotifications.value.length} notifications?`
-    )
-  )
-    return;
-
-  try {
-    await notificationStore.bulkArchive(selectedNotifications.value);
-    selectedNotifications.value = [];
-    calculateStats();
-  } catch (error) {
-    console.error("Error bulk archiving notifications:", error);
-  }
-};
-
-const bulkDelete = async () => {
-  if (selectedNotifications.value.length === 0) return;
-
-  if (
-    !confirm(
-      `Are you sure you want to delete ${selectedNotifications.value.length} notifications? This action cannot be undone.`
-    )
-  )
-    return;
-
-  try {
-    await notificationStore.bulkDelete(selectedNotifications.value);
-    selectedNotifications.value = [];
-    calculateStats();
-  } catch (error) {
-    console.error("Error bulk deleting notifications:", error);
-  }
-};
-
-const clearSelection = () => {
-  selectedNotifications.value = [];
-};
-
-const exportNotifications = () => {
-  // TODO: Implement export functionality
-  console.log("Exporting notifications:", notifications.value);
-};
-
-const formatDate = (date: string) => {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(date));
+const getPriorityColor = (priority: string) => {
+  const colors = {
+    low: "bg-gray-500/20 text-gray-400",
+    medium: "bg-blue-500/20 text-blue-400",
+    high: "bg-orange-500/20 text-orange-400",
+    urgent: "bg-red-500/20 text-red-400",
+  };
+  return colors[priority as keyof typeof colors] || colors.low;
 };
 
 const getTypeColor = (type: string) => {
@@ -643,37 +641,139 @@ const getTypeColor = (type: string) => {
   return colors[type as keyof typeof colors] || colors.info;
 };
 
-const getPriorityColor = (priority: string) => {
-  const colors = {
-    low: "bg-gray-500/20 text-gray-400",
-    medium: "bg-blue-500/20 text-blue-400",
-    high: "bg-orange-500/20 text-orange-400",
-    urgent: "bg-red-500/20 text-red-400",
-  };
-  return colors[priority as keyof typeof colors] || colors.medium;
-};
-
-const getRecipientText = (notification: any) => {
-  switch (notification.recipientType) {
-    case "user":
-      return "Direct message";
-    case "church":
-      return "Church-wide";
-    case "team":
-      return "Team message";
-    case "all":
-      return "All users";
-    default:
-      return "Unknown";
-  }
-};
-
 const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
+const formatDate = (date: string | Date) => {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(date));
+};
+
+const handleNotificationClick = (notification: any) => {
+  if (!notification.read) {
+    toggleReadStatus(notification);
+  }
+
+  // If there's an action URL, navigate there
+  if (notification.actionUrl) {
+    // In a real app, this would navigate to the action URL
+    console.log("Navigate to:", notification.actionUrl);
+  }
+};
+
+const toggleReadStatus = (notification: any) => {
+  notification.read = !notification.read;
+  // In a real app, this would call the API
+  console.log("Toggle read status for:", notification.id);
+};
+
+const archiveNotification = (notification: any) => {
+  notification.archived = true;
+  // In a real app, this would call the API
+  console.log("Archive notification:", notification.id);
+};
+
+const deleteNotification = (notification: any) => {
+  if (!confirm("Are you sure you want to delete this notification?")) return;
+
+  const index = mockNotifications.value.findIndex(
+    (n) => n.id === notification.id
+  );
+  if (index !== -1) {
+    mockNotifications.value.splice(index, 1);
+  }
+
+  console.log("Delete notification:", notification.id);
+};
+
+const markAllAsRead = () => {
+  mockNotifications.value.forEach((notification) => {
+    notification.read = true;
+  });
+  console.log("Mark all notifications as read");
+};
+
+const bulkMarkAsRead = () => {
+  selectedNotifications.value.forEach((id) => {
+    const notification = mockNotifications.value.find((n) => n.id === id);
+    if (notification) {
+      notification.read = true;
+    }
+  });
+  selectedNotifications.value = [];
+  console.log("Bulk mark as read:", selectedNotifications.value);
+};
+
+const bulkArchive = () => {
+  selectedNotifications.value.forEach((id) => {
+    const notification = mockNotifications.value.find((n) => n.id === id);
+    if (notification) {
+      notification.archived = true;
+    }
+  });
+  selectedNotifications.value = [];
+  console.log("Bulk archive:", selectedNotifications.value);
+};
+
+const bulkDelete = () => {
+  if (
+    !confirm(
+      `Are you sure you want to delete ${selectedNotifications.value.length} notifications?`
+    )
+  )
+    return;
+
+  selectedNotifications.value.forEach((id) => {
+    const index = mockNotifications.value.findIndex((n) => n.id === id);
+    if (index !== -1) {
+      mockNotifications.value.splice(index, 1);
+    }
+  });
+
+  selectedNotifications.value = [];
+  console.log("Bulk delete:", selectedNotifications.value);
+};
+
+const clearSelection = () => {
+  selectedNotifications.value = [];
+};
+
+const refreshNotifications = () => {
+  console.log("Refresh notifications");
+};
+
+const loadMore = () => {
+  console.log("Load more notifications");
+};
+
+const calculateStats = () => {
+  const totalNotifications = mockNotifications.value.length;
+  const unreadCount = mockNotifications.value.filter((n) => !n.read).length;
+  const thisWeekCount = mockNotifications.value.filter((n) => {
+    const notificationDate = new Date(n.sentAt);
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    return notificationDate >= weekAgo;
+  }).length;
+  const urgentCount = mockNotifications.value.filter(
+    (n) => n.priority === "urgent"
+  ).length;
+
+  stats.value = {
+    totalNotifications,
+    unreadCount,
+    thisWeekCount,
+    urgentCount,
+  };
+};
+
 // Initialize
 onMounted(async () => {
-  await applyFilters();
+  calculateStats();
 });
 </script>
